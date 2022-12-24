@@ -1,10 +1,6 @@
+package tree;
+
 import java.util.*;
-
-enum Color {
-    Red,
-    Black
-}
-
 
 public class BinaryTree<TK, TV> {
     public Node<TK, TV> root;
@@ -79,32 +75,27 @@ public class BinaryTree<TK, TV> {
         insertFixUp(newItem); //call method to check for violations and fix
     }
 
-    public  TV findNearestLess(TK key)
-    {
+    public TV findNearestLess(TK key) {
         var hashedKey = key.hashCode();
         var node = this.root;
         Node<TK, TV> optimalNode = null;
-        do
-        {
-            if (node == null)
-            {
-                break;
-            }
-
+        while (node != null) {
             if (node.hash <= hashedKey &&
-                    (optimalNode == null || hashedKey - optimalNode.hash > hashedKey - node.hash))
-            {
+                    (optimalNode == null ||
+                            hashedKey - optimalNode.hash > hashedKey - node.hash
+                    )
+            ) {
                 optimalNode = node;
             }
 
             node = node.hash > hashedKey ? node.left : node.right;
-        } while (true);
-
-        return optimalNode == null ? null : optimalNode.data;
         }
 
+        return optimalNode == null ? null : optimalNode.data;
+    }
 
-        private void inOrderDisplay(Node<TK, TV> current) {
+
+    private void inOrderDisplay(Node<TK, TV> current) {
         if (current != null) {
             inOrderDisplay(current.left);
             System.out.println(current.data.toString());
@@ -237,8 +228,8 @@ public class BinaryTree<TK, TV> {
     public void delete(TK key) {
         //first find the node in the tree to delete and assign to item pointer/reference
         var item = find(key);
-        Node<TK, TV> X = null;
-        Node<TK, TV> Y = null;
+        Node<TK, TV> X;
+        Node<TK, TV> Y;
 
         if (item == null) {
             System.out.println("Nothing to delete!");
@@ -284,8 +275,9 @@ public class BinaryTree<TK, TV> {
     /// <param name="X"></param>
     private void deleteFixUp(Node<TK, TV> X) {
         while (X != null && X != root && X.colour == Color.Black) {
+            Node<TK, TV> W;
             if (X == X.parent.left) {
-                var W = X.parent.right;
+                W = X.parent.right;
                 if (W.colour == Color.Red) {
                     W.colour = Color.Black; //case 1
                     X.parent.colour = Color.Red; //case 1
@@ -307,10 +299,9 @@ public class BinaryTree<TK, TV> {
                 X.parent.colour = Color.Black; //case 4
                 W.right.colour = Color.Black; //case 4
                 leftRotate(X.parent); //case 4
-                X = root; //case 4
             } else //mirror code from above with "right" & "left" exchanged
             {
-                var W = X.parent.left;
+                W = X.parent.left;
                 if (W.colour == Color.Red) {
                     W.colour = Color.Black;
                     X.parent.colour = Color.Red;
@@ -332,8 +323,8 @@ public class BinaryTree<TK, TV> {
                 X.parent.colour = Color.Black;
                 W.left.colour = Color.Black;
                 rightRotate(X.parent);
-                X = root;
             }
+            X = root; //case 4
         }
 
         if (X != null)
@@ -366,7 +357,7 @@ public class BinaryTree<TK, TV> {
         }
     }
 
-    public List<Map.Entry<TK, TV>> ToList() {
+    public List<Map.Entry<TK, TV>> toList() {
         var res = new ArrayList<Map.Entry<TK, TV>>() {
         };
 
@@ -388,7 +379,7 @@ public class BinaryTree<TK, TV> {
     }
 
     public Iterator<Map.Entry<TK, TV>> getIterator() {
-        return ToList().iterator();
+        return toList().iterator();
     }
 
 }
