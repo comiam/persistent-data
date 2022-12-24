@@ -1,6 +1,6 @@
 package persistency_base;
 
-class ModificationCount {
+public class ModificationCount {
     public int value;
 
     public ModificationCount(int value) {
