@@ -79,7 +79,32 @@ public class BinaryTree<TK, TV> {
         insertFixUp(newItem); //call method to check for violations and fix
     }
 
-    private void inOrderDisplay(Node<TK, TV> current) {
+    public  TV findNearestLess(TK key)
+    {
+        var hashedKey = key.hashCode();
+        var node = this.root;
+        Node<TK, TV> optimalNode = null;
+        do
+        {
+            if (node == null)
+            {
+                break;
+            }
+
+            if (node.hash <= hashedKey &&
+                    (optimalNode == null || hashedKey - optimalNode.hash > hashedKey - node.hash))
+            {
+                optimalNode = node;
+            }
+
+            node = node.hash > hashedKey ? node.left : node.right;
+        } while (true);
+
+        return optimalNode == null ? null : optimalNode.data;
+        }
+
+
+        private void inOrderDisplay(Node<TK, TV> current) {
         if (current != null) {
             inOrderDisplay(current.left);
             System.out.println(current.data.toString());
