@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="BinaryTreeTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2022-12-24T13:15:44" hostname="maxim-pc" time="0.035">
+  <properties/>
+  <testcase name="[1] 8, 7" classname="BinaryTreeTest" time="0.018"/>
+  <testcase name="[2] 2, 1" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[3] 13, 12" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[4] 19, 18" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[5] 30, 20" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[6] 1, 1" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[7] 6, 6" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="[8] 20, 20" classname="BinaryTreeTest" time="0.0"/>
+  <testcase name="[9] 0, null" classname="BinaryTreeTest" time="0.0"/>
+  <testcase name="[10] -10, null" classname="BinaryTreeTest" time="0.001"/>
+  <testcase name="toListTest()" classname="BinaryTreeTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
