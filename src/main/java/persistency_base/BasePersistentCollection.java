@@ -9,6 +9,10 @@ public abstract class BasePersistentCollection<T> {
         startModificationCount = 0;
     }
 
+    protected BasePersistentCollection(PersistentContent<T> nodes, int count, int modificationCount) {
+        this(nodes, count, modificationCount, 0);
+    }
+
     protected BasePersistentCollection(PersistentContent<T> nodes, int count, int modificationCount, int startModificationCount) {
         this.nodes = nodes;
         this.modificationCount = modificationCount;
@@ -18,9 +22,9 @@ public abstract class BasePersistentCollection<T> {
 
     public int count;
 
-    protected abstract int RecalculateCount(int modificationStep);
+    protected abstract int recalculateCount(int modificationStep);
 
-    protected abstract PersistentContent<T> ReassembleNodes();
+    protected abstract PersistentContent<T> reassembleNodes();
 }
 
 
