@@ -113,6 +113,48 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
 
     }
 
+    T get(int num) {
+        var node = findNode(num);
+        return node == nodes.content.pseudoTail ? null :
+                node.value(modificationCount).value == null ?
+                        null :
+                        node.value(modificationCount).value.value(modificationCount);
+    }
+
+    public PersistentLinkedList<T> clear() {
+        if (count == 0)
+        {
+            return this;
+        }
+
+        if (nodes.maxModification.value > modificationCount)
+        {
+            var newContent = reassembleNodes();
+            newContent.update(m ->
+                    {
+                            m.pseudoHead.update(modificationCount + 1,
+                                    new DoubleLinkedData<T>(m.pseudoTail,null,m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
+            m.pseudoTail.update(modificationCount + 1,
+                    new DoubleLinkedData<T>(null,m.pseudoHead,m.pseudoTail.value(modificationCount).value,m.pseudoTail.value(modificationCount).id));
+                });
+            return new PersistentLinkedList<T>(newContent, 0, modificationCount + 1);
+        }
+
+        nodes.update(m ->
+                {
+                        m.pseudoHead.update(modificationCount + 1,
+                                new DoubleLinkedData<T>(m.pseudoTail,null,m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
+        m.pseudoTail.update(modificationCount + 1,
+                new DoubleLinkedData<>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
+            });
+        return new PersistentLinkedList<>(nodes, 0, modificationCount + 1);
+
+
+
+    }
+
+
+
     public boolean contains(T item) {
         var current = nodes.content.pseudoHead.value(modificationCount).next;
         for (var i = count; i != 0; i--) {
