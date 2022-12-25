@@ -15,7 +15,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         head.update(modificationCount, new DoubleLinkedData<T>(tail, null, head.value(modificationCount - 1).value, head.value(modificationCount - 1).id));
         tail.update(modificationCount, new DoubleLinkedData<T>(null, head, tail.value(modificationCount - 1).value, tail.value(modificationCount - 1).id));
 
-        nodes = new PersistentContent<>(new DoubleLinkedContent<T>(head, tail),
+        nodes = new PersistentContent<>(new DoubleLinkedContent<>(head, tail),
                 new ModificationCount(modificationCount));
 
     }
@@ -122,37 +122,33 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
     }
 
     public PersistentLinkedList<T> clear() {
-        if (count == 0)
-        {
+        if (count == 0) {
             return this;
         }
 
-        if (nodes.maxModification.value > modificationCount)
-        {
+        if (nodes.maxModification.value > modificationCount) {
             var newContent = reassembleNodes();
             newContent.update(m ->
-                    {
-                            m.pseudoHead.update(modificationCount + 1,
-                                    new DoubleLinkedData<T>(m.pseudoTail,null,m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
-            m.pseudoTail.update(modificationCount + 1,
-                    new DoubleLinkedData<T>(null,m.pseudoHead,m.pseudoTail.value(modificationCount).value,m.pseudoTail.value(modificationCount).id));
-                });
+            {
+                m.pseudoHead.update(modificationCount + 1,
+                        new DoubleLinkedData<T>(m.pseudoTail, null, m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
+                m.pseudoTail.update(modificationCount + 1,
+                        new DoubleLinkedData<T>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
+            });
             return new PersistentLinkedList<T>(newContent, 0, modificationCount + 1);
         }
 
         nodes.update(m ->
-                {
-                        m.pseudoHead.update(modificationCount + 1,
-                                new DoubleLinkedData<T>(m.pseudoTail,null,m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
-        m.pseudoTail.update(modificationCount + 1,
-                new DoubleLinkedData<>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
-            });
+        {
+            m.pseudoHead.update(modificationCount + 1,
+                    new DoubleLinkedData<T>(m.pseudoTail, null, m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
+            m.pseudoTail.update(modificationCount + 1,
+                    new DoubleLinkedData<>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
+        });
         return new PersistentLinkedList<>(nodes, 0, modificationCount + 1);
 
 
-
     }
-
 
 
     public boolean contains(T item) {
@@ -383,4 +379,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                         modificationCount + 1);
 
     }
+
+    public int size() {
+        return count;
+    }
+
 }
