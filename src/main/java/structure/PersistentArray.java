@@ -13,7 +13,7 @@ public class PersistentArray<T> extends BasePersistentCollection<List<Persistent
         super(nodes, count, modificationCount);
     }
 
-    private PersistentArray(PersistentContent<List<PersistentNode<T>>> nodes, int count, int modificationCount, int start) {
+    PersistentArray(PersistentContent<List<PersistentNode<T>>> nodes, int count, int modificationCount, int start) {
         super(nodes, count, modificationCount, start);
     }
 
