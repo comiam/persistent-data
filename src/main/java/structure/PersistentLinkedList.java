@@ -5,6 +5,7 @@ import structure.Linked_list_util.DoubleLinkedContent;
 import structure.Linked_list_util.DoubleLinkedData;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLinkedContent<T>> implements IUndoRedo<PersistentLinkedList<T>> {
@@ -40,7 +41,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
     @Override
     protected PersistentContent<DoubleLinkedContent<T>> reassembleNodes() {
         var allModifications = new ArrayList<Map.Entry<UUID, Map.Entry<Integer, DoubleLinkedData<T>>>>();
-        var nodeModificationCount = new HashMap<UUID, Integer>();
+        var nodeModificationCount = new LinkedHashMap<UUID, Integer>();
         var current = nodes.content.pseudoHead;
 
         for (var i = count; i != -2; i--) {
@@ -61,9 +62,12 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                 .flatMap(entries -> entries
                         .stream()
                         .sorted((Comparator.comparing(o -> nodeModificationCount.get(o.getKey())))))
-                .toList());
+                .toList())
+                .stream()
+                .sorted(Comparator.comparing(o->o.getValue().getKey()))
+                .collect(Collectors.toList());
 
-        var newNodes = new HashMap<UUID, PersistentNode<DoubleLinkedData<T>>>();
+        var newNodes = new LinkedHashMap<UUID, PersistentNode<DoubleLinkedData<T>>>();
         newNodes.put(orderedModifications.get(0).getKey(),
                 new PersistentNode<>(-1,
                         new DoubleLinkedData<>(null,
@@ -71,7 +75,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                                 new PersistentNode<>(-1, null),
                                 orderedModifications.get(0).getKey())));
 
+
         orderedModifications.remove(0);
+
         newNodes.put(orderedModifications.get(0).getKey(),
                 new PersistentNode<>(-1,
                         new DoubleLinkedData<>(null,
