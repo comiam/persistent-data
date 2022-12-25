@@ -63,7 +63,6 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                         .sorted((Comparator.comparing(o -> nodeModificationCount.get(o.getKey())))))
                 .toList());
 
-
         var newNodes = new HashMap<UUID, PersistentNode<DoubleLinkedData<T>>>();
         newNodes.put(orderedModifications.get(0).getKey(),
                 new PersistentNode<>(-1,
@@ -113,7 +112,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
 
     }
 
-    T get(int num) {
+    public T get(int num) {
         var node = findNode(num);
         return node == nodes.content.pseudoTail ? null :
                 node.value(modificationCount).value == null ?
