@@ -2,7 +2,7 @@ package tree;
 
 import java.util.*;
 
-public class BinaryTree<TK, TV> {
+public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
     public Node<TK, TV> root;
 
     public Node<TK, TV> find(TK key) {
@@ -103,11 +103,6 @@ public class BinaryTree<TK, TV> {
         }
     }
 
-    /// <summary>
-    /// Left Rotate
-    /// </summary>
-    /// <param name="X"></param>
-    /// <returns>void</returns>
     private void leftRotate(Node<TK, TV> X) {
         var Y = X.right; // set Y
         X.right = Y.left; //turn Y's left subtree into X's right subtree
@@ -136,11 +131,6 @@ public class BinaryTree<TK, TV> {
 
     }
 
-    /// <summary>
-    /// Rotate Right
-    /// </summary>
-    /// <param name="Y"></param>
-    /// <returns>void</returns>
     private void rightRotate(Node<TK, TV> Y) {
         // right rotate is simply mirror code from left rotate
         var X = Y.left;
@@ -267,12 +257,17 @@ public class BinaryTree<TK, TV> {
         if (Y.colour == Color.Black) {
             deleteFixUp(X);
         }
-
     }
 
-    /// Checks the tree for any violations after deletion and performs a fix
-    /// </summary>
-    /// <param name="X"></param>
+    public TV get(TK key) {
+        var node = find(key);
+        return node == null ? null : node.data;
+    }
+
+    public boolean contains(TK key) {
+        return find(key) != null;
+    }
+
     private void deleteFixUp(Node<TK, TV> X) {
         while (X != null && X != root && X.colour == Color.Black) {
             Node<TK, TV> W;
@@ -358,8 +353,7 @@ public class BinaryTree<TK, TV> {
     }
 
     public List<Map.Entry<TK, TV>> toList() {
-        var res = new ArrayList<Map.Entry<TK, TV>>() {
-        };
+        var res = new ArrayList<Map.Entry<TK, TV>>();
 
         addToList(res, root);
 
@@ -373,13 +367,12 @@ public class BinaryTree<TK, TV> {
             }
 
             addToList(list, node.left);
-            list.add(Map.entry(node.key, node.data));
+            list.add(new AbstractMap.SimpleEntry<>(node.key, node.data));
             node = node.right;
         }
     }
 
-    public Iterator<Map.Entry<TK, TV>> getIterator() {
+    public Iterator<Map.Entry<TK, TV>> iterator() {
         return toList().iterator();
     }
-
 }

@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import structure.PersistentArray;
+import structure.array.PersistentArray;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,10 +9,10 @@ public class PersistentArrayTest {
     public void addTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
-        var arr4 = arr1.persistAdd(7);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
+        var arr4 = arr1.add(7);
 
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(0));
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(1));
@@ -39,13 +39,13 @@ public class PersistentArrayTest {
     public void insertTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistInsert(0, 3);
-        var arr2 = arr1.persistInsert(0, 5);
-        var arr3 = arr2.persistInsert(1, 6);
-        var arr4 = arr1.persistInsert(1, 7);
+        var arr1 = arr0.insert(0, 3);
+        var arr2 = arr1.insert(0, 5);
+        var arr3 = arr2.insert(1, 6);
+        var arr4 = arr1.insert(1, 7);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> arr0.persistInsert(1, 0));
-        assertThrows(IndexOutOfBoundsException.class, () -> arr0.persistInsert(-1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> arr0.insert(1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> arr0.insert(-1, 0));
 
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(0));
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(1));
@@ -72,16 +72,16 @@ public class PersistentArrayTest {
     public void replaceTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
-        var arr6 = arr1.persistAdd(8);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
+        var arr6 = arr1.add(8);
 
-        var arr4 = arr6.persistReplace(0, 9);
-        var arr5 = arr3.persistReplace(1, 1);
+        var arr4 = arr6.replace(0, 9);
+        var arr5 = arr3.replace(1, 1);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> arr0.persistReplace(1, 0));
-        assertThrows(IndexOutOfBoundsException.class, () -> arr0.persistReplace(-1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> arr0.replace(1, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> arr0.replace(-1, 0));
 
         assertEquals(9, arr4.get(0));
         assertEquals(8, arr4.get(1));
@@ -96,14 +96,14 @@ public class PersistentArrayTest {
     public void removeTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
-        var arr7 = arr1.persistAdd(7);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
+        var arr7 = arr1.add(7);
 
-        var arr4 = arr2.persistRemove(0);
-        var arr5 = arr7.persistRemove(1);
-        var arr6 = arr3.persistRemove(1);
+        var arr4 = arr2.remove(0);
+        var arr5 = arr7.remove(1);
+        var arr6 = arr3.remove(1);
 
         assertEquals(5, arr4.get(0));
         assertThrows(IndexOutOfBoundsException.class, () -> arr4.get(1));
@@ -122,12 +122,12 @@ public class PersistentArrayTest {
     public void clearTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
 
-        var arr4 = arr2.persistClear();
-        var arr5 = arr3.persistClear();
+        var arr4 = arr2.clearAll();
+        var arr5 = arr3.clearAll();
 
         assertThrows(IndexOutOfBoundsException.class, () -> arr4.get(0));
         assertThrows(IndexOutOfBoundsException.class, () -> arr4.get(1));
@@ -142,9 +142,9 @@ public class PersistentArrayTest {
     public void undoTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
 
         var arr4 = arr0.undo();
         var arr5 = arr2.undo();
@@ -165,9 +165,9 @@ public class PersistentArrayTest {
     public void redoTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
 
         var arr4 = arr3.redo();
         var arr5 = arr0.redo();
@@ -187,10 +187,10 @@ public class PersistentArrayTest {
     public void toPersistentLinkedListTest() {
         var arr0 = new PersistentArray<Integer>();
 
-        var arr1 = arr0.persistAdd(3);
-        var arr2 = arr1.persistAdd(5);
-        var arr3 = arr2.persistAdd(6);
-        var arr4 = arr3.persistAdd(8);
+        var arr1 = arr0.add(3);
+        var arr2 = arr1.add(5);
+        var arr3 = arr2.add(6);
+        var arr4 = arr3.add(8);
 
         var l1 = arr4.toPersistentLinkedList();
 
