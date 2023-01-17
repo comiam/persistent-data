@@ -1,6 +1,8 @@
 package structure;
 
 import persistency_base.*;
+import structure.Linked_list_util.DoubleLinkedContent;
+import structure.Linked_list_util.DoubleLinkedData;
 
 import java.util.*;
 
@@ -258,4 +260,42 @@ public class PersistentArray<T> extends BasePersistentCollection<List<Persistent
                                 )
                 ).count();
     }
+
+    public PersistentLinkedList<T> toPersistentLinkedList() {
+
+        var head = new PersistentNode<>(
+                modificationCount - 1,
+                new DoubleLinkedData<T>(null, null,
+                        new PersistentNode<>(-1, null)
+                )
+        );
+        var tail = new PersistentNode<>(
+                modificationCount - 1,
+                new DoubleLinkedData<T>(null, null,
+                        new PersistentNode<>(-1, null))
+        );
+        head.update(modificationCount, new DoubleLinkedData<T>(tail, null,
+                head.value(modificationCount - 1).value, head.value(modificationCount - 1).id));
+        tail.update(modificationCount, new DoubleLinkedData<T>(null, head,
+                tail.value(modificationCount - 1).value, tail.value(modificationCount - 1).id));
+
+        var content = new PersistentContent<>(new DoubleLinkedContent<>(head, tail), nodes.maxModification);
+
+        for (var t : nodes.content) {
+            var tailValue = content.content.pseudoTail.value(modificationCount);
+            var prevToTail = tailValue.previous;
+            var prevToTailValue = content.content.pseudoTail.value(modificationCount).previous.value(modificationCount);
+            var dnode = new DoubleLinkedData<T>(content.content.pseudoTail, prevToTail, t);
+            var node = new PersistentNode<DoubleLinkedData<T>>(modificationCount - 1, dnode);
+            prevToTail.update(modificationCount,
+                    new DoubleLinkedData<T>(node, prevToTailValue.previous, prevToTailValue.value, prevToTailValue.id));
+            content.content.pseudoTail.update(modificationCount, new DoubleLinkedData<T>(tailValue.next, node, tailValue.value, tailValue.id));
+        }
+
+        return new PersistentLinkedList<>(content, count, modificationCount, modificationCount);
+
+
+    }
+
+
 }

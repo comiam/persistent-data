@@ -16,8 +16,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         head.update(modificationCount, new DoubleLinkedData<T>(tail, null, head.value(modificationCount - 1).value, head.value(modificationCount - 1).id));
         tail.update(modificationCount, new DoubleLinkedData<T>(null, head, tail.value(modificationCount - 1).value, tail.value(modificationCount - 1).id));
 
-        nodes = new PersistentContent<>(new DoubleLinkedContent<>(head, tail),
-                new ModificationCount(modificationCount));
+        nodes = new PersistentContent<>(new DoubleLinkedContent<>(head, tail), new ModificationCount(modificationCount));
 
     }
 
@@ -27,9 +26,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         super(nodes, count, modificationCount);
     }
 
-    private PersistentLinkedList(PersistentContent<DoubleLinkedContent<T>> nodes,
-                                 int count, int modificationCount,
-                                 int start) {
+    PersistentLinkedList(PersistentContent<DoubleLinkedContent<T>> nodes,
+                         int count, int modificationCount,
+                         int start) {
         super(nodes, count, modificationCount, start);
     }
 
