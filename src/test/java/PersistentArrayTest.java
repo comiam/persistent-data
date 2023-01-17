@@ -183,4 +183,21 @@ public class PersistentArrayTest {
         assertEquals(5, arr6.get(1));
         assertEquals(6, arr6.get(2));
     }
+    @Test
+    public void toPersistentLinkedListTest() {
+        var arr0 = new PersistentArray<Integer>();
+
+        var arr1 = arr0.persistAdd(3);
+        var arr2 = arr1.persistAdd(5);
+        var arr3 = arr2.persistAdd(6);
+        var arr4 = arr3.persistAdd(8);
+
+        var l1 = arr4.toPersistentLinkedList();
+
+        assertEquals(3, l1.get(0));
+        assertEquals(5, l1.get(1));
+        assertEquals(6, l1.get(2));
+        assertEquals(8, l1.get(3));
+    }
+
 }

@@ -242,4 +242,8 @@ public class PersistentLinkedListTest {
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(3));
     }
 
+    public void toPersistentMap(){
+
+    }
+
 }
