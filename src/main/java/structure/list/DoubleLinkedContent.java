@@ -2,7 +2,7 @@ package structure.list;
 
 import persistency_base.PersistentNode;
 
-class DoubleLinkedContent<T> {
+public class DoubleLinkedContent<T> {
     public final PersistentNode<DoubleLinkedData<T>> pseudoHead, pseudoTail;
 
     public DoubleLinkedContent(PersistentNode<DoubleLinkedData<T>> pseudoHead, PersistentNode<DoubleLinkedData<T>> pseudoTail) {

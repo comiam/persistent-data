@@ -4,7 +4,7 @@ import persistency_base.PersistentNode;
 
 import java.util.UUID;
 
-class DoubleLinkedData<T> {
+public class DoubleLinkedData<T> {
     public PersistentNode<DoubleLinkedData<T>> previous;
     public PersistentNode<DoubleLinkedData<T>> next;
     public UUID id;

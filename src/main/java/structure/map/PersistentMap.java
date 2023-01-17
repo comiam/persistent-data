@@ -5,22 +5,15 @@ import structure.array.PersistentArray;
 import structure.list.PersistentLinkedList;
 import tree.BinaryTree;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class PersistentDictionary<TK, TV> extends BasePersistentCollection<BinaryTree<TK, PersistentNode<TV>>> implements Iterable<Map.Entry<TK, TV>>, IUndoRedo<PersistentDictionary<TK, TV>> {
-    public PersistentDictionary() {
+public class PersistentMap<TK, TV> extends BasePersistentCollection<BinaryTree<TK, PersistentNode<TV>>> implements Iterable<Map.Entry<TK, TV>>, IUndoRedo<PersistentMap<TK, TV>> {
+    public PersistentMap() {
         nodes = new PersistentContent<>(new BinaryTree<>(), new ModificationCount(modificationCount));
     }
 
-    private PersistentDictionary(PersistentContent<BinaryTree<TK, PersistentNode<TV>>> nodes, int count, int modificationCount) {
+    private PersistentMap(PersistentContent<BinaryTree<TK, PersistentNode<TV>>> nodes, int count, int modificationCount) {
         super(nodes, count, modificationCount);
-    }
-
-    private PersistentDictionary(PersistentContent<BinaryTree<TK, PersistentNode<TV>>> nodes, int count, int modificationCount, int start) {
-        super(nodes, count, modificationCount, start);
     }
 
     protected PersistentContent<BinaryTree<TK, PersistentNode<TV>>> reassembleNodes() {
@@ -31,7 +24,7 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
 
         var allModifications = new ArrayList<Map.Entry<TK, Map.Entry<Integer, TV>>>();
 
-        for (var entry : nodes.content.toList()) {
+        for (var entry : nodes.content) {
             var nodeKey = entry.getKey();
             var persistentNode = entry.getValue();
 
@@ -63,7 +56,7 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
     }
 
     private void implAdd(PersistentContent<BinaryTree<TK, PersistentNode<TV>>> nodes, int modificationCount, TK key, TV value) {
-        nodes.update(c -> c.insert(key, new PersistentNode<TV>(modificationCount + 1, value)));
+        nodes.update(c -> c.insert(key, new PersistentNode<>(modificationCount + 1, value)));
     }
 
     private void implRemove(PersistentContent<BinaryTree<TK, PersistentNode<TV>>> nodes, int modificationCount, TK key) {
@@ -82,25 +75,25 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
         nodes.update(c -> c.get(key).update(modificationCount + 1, value));
     }
 
-    public PersistentDictionary<TK, TV> add(TK key, TV value) {
+    public PersistentMap<TK, TV> add(TK key, TV value) {
         var tryNode = nodes.content.get(key);
         if (tryNode != null && tryNode.modifications.toList().stream().anyMatch(m -> m.getKey() <= modificationCount)) {
-            throw new IllegalArgumentException("Such a key is already presented in the dictionary");
+            throw new IllegalArgumentException("Such a key is already exists!");
         }
 
         if (nodes.maxModification.value > modificationCount) {
             var res = reassembleNodes();
             implAdd(res, modificationCount, key, value);
 
-            return new PersistentDictionary<>(res, count + 1, modificationCount + 1);
+            return new PersistentMap<>(res, count + 1, modificationCount + 1);
         }
 
         implAdd(nodes, modificationCount, key, value);
 
-        return new PersistentDictionary<>(nodes, count + 1, modificationCount + 1);
+        return new PersistentMap<>(nodes, count + 1, modificationCount + 1);
     }
 
-    public PersistentDictionary<TK, TV> remove(TK key) {
+    public PersistentMap<TK, TV> remove(TK key) {
         var tryNode = nodes.content.get(key);
         if (tryNode == null || tryNode.modifications.toList().stream().allMatch(m -> m.getKey() > modificationCount)) {
             return this;
@@ -110,43 +103,43 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
             var res = reassembleNodes();
             implRemove(res, modificationCount, key);
 
-            return new PersistentDictionary<>(res, count - 1, modificationCount + 1);
+            return new PersistentMap<>(res, count - 1, modificationCount + 1);
         }
 
         implRemove(nodes, modificationCount, key);
 
-        return new PersistentDictionary<TK, TV>(nodes, count - 1, modificationCount + 1);
+        return new PersistentMap<>(nodes, count - 1, modificationCount + 1);
     }
 
-    public PersistentDictionary<TK, TV> clear() {
+    public PersistentMap<TK, TV> clear() {
         if (nodes.maxModification.value > modificationCount) {
             var res = reassembleNodes();
             implClear(res, modificationCount);
 
-            return new PersistentDictionary<>(res, 0, modificationCount + 1);
+            return new PersistentMap<>(res, 0, modificationCount + 1);
         }
 
         implClear(nodes, modificationCount);
 
-        return new PersistentDictionary<>(nodes, 0, modificationCount + 1);
+        return new PersistentMap<>(nodes, 0, modificationCount + 1);
     }
 
-    public PersistentDictionary<TK, TV> replace(TK key, TV value) {
+    public PersistentMap<TK, TV> replace(TK key, TV value) {
         var tryNode = nodes.content.get(key);
         if (tryNode == null || tryNode.modifications.toList().stream().allMatch(m -> m.getKey() > modificationCount)) {
-            throw new IllegalArgumentException("Such a key is not presented in the dictionary");
+            throw new IllegalArgumentException("Such a key does not exists!");
         }
 
         if (nodes.maxModification.value > modificationCount) {
             var res = reassembleNodes();
             implReplace(res, modificationCount, key, value);
 
-            return new PersistentDictionary<>(res, count, modificationCount + 1);
+            return new PersistentMap<>(res, count, modificationCount + 1);
         }
 
         implReplace(nodes, modificationCount, key, value);
 
-        return new PersistentDictionary<>(nodes, count, modificationCount + 1);
+        return new PersistentMap<>(nodes, count, modificationCount + 1);
     }
 
     public boolean containsKey(TK key) {
@@ -161,15 +154,50 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
                 : node.modifications.findNearestLess(modificationCount);
     }
 
-    public PersistentDictionary<TK, TV> undo() {
-        return modificationCount == startModificationCount ? this : new PersistentDictionary<TK, TV>(nodes,
+    public List<TK> keySet() {
+        return nodes.content.
+                toList().
+                stream().
+                filter(k -> k.getValue().modifications.
+                        toList().
+                        stream().
+                        anyMatch(m -> m.getKey() <= modificationCount)
+                ).
+                map(Map.Entry::getKey).
+                toList();
+    }
+
+
+    public List<TV> valueSet() {
+        return nodes.content.
+                toList().
+                stream().
+                filter(k -> k.getValue().modifications.
+                        toList().
+                        stream().
+                        anyMatch(m -> m.getKey() <= modificationCount)
+                ).
+                map(k -> k.getValue().value(modificationCount)).
+                toList();
+    }
+
+    public Iterator<Map.Entry<TK, TV>> iterator() {
+        return nodes.content.toList().stream()
+                .filter(k ->
+                        k.getValue().modifications.toList().stream().anyMatch(m -> m.getKey() <= modificationCount))
+                .map(k ->
+                        Map.entry(k.getKey(), k.getValue().value(modificationCount))).toList().iterator();
+    }
+
+    public PersistentMap<TK, TV> undo() {
+        return modificationCount == startModificationCount ? this : new PersistentMap<>(nodes,
                 recalculateCount(modificationCount - 1), modificationCount - 1);
     }
 
-    public PersistentDictionary<TK, TV> redo() {
+    public PersistentMap<TK, TV> redo() {
         return modificationCount == nodes.maxModification.value
                 ? this
-                : new PersistentDictionary<TK, TV>(
+                : new PersistentMap<>(
                 nodes,
                 recalculateCount(modificationCount + 1),
                 modificationCount + 1
@@ -192,6 +220,10 @@ public class PersistentDictionary<TK, TV> extends BasePersistentCollection<Binar
         content.content.addAll(persistentNodes);
 
         return new PersistentArray<>(content, count, modificationCount, modificationCount);
+    }
+
+    public PersistentLinkedList<TV> toPersistentLinkedList() {
+        return toPersistentArray().toPersistentLinkedList();
     }
 }
 

@@ -4,15 +4,16 @@ import persistency_base.*;
 import structure.array.PersistentArray;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLinkedContent<T>> implements IUndoRedo<PersistentLinkedList<T>> {
 
     public PersistentLinkedList() {
         var head = new PersistentNode<>(modificationCount - 1, new DoubleLinkedData<T>(null, null, new PersistentNode<>(-1, null)));
-        var tail = new PersistentNode<>(modificationCount - 1, new DoubleLinkedData<T>(null, null, new PersistentNode<T>(-1, null)));
-        head.update(modificationCount, new DoubleLinkedData<T>(tail, null, head.value(modificationCount - 1).value, head.value(modificationCount - 1).id));
-        tail.update(modificationCount, new DoubleLinkedData<T>(null, head, tail.value(modificationCount - 1).value, tail.value(modificationCount - 1).id));
+        var tail = new PersistentNode<>(modificationCount - 1, new DoubleLinkedData<>(null, null, new PersistentNode<T>(-1, null)));
+        head.update(modificationCount, new DoubleLinkedData<>(tail, null, head.value(modificationCount - 1).value, head.value(modificationCount - 1).id));
+        tail.update(modificationCount, new DoubleLinkedData<>(null, head, tail.value(modificationCount - 1).value, tail.value(modificationCount - 1).id));
 
         nodes = new PersistentContent<>(new DoubleLinkedContent<>(head, tail), new ModificationCount(modificationCount));
 
@@ -24,9 +25,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         super(nodes, count, modificationCount);
     }
 
-    PersistentLinkedList(PersistentContent<DoubleLinkedContent<T>> nodes,
-                         int count, int modificationCount,
-                         int start) {
+    public PersistentLinkedList(PersistentContent<DoubleLinkedContent<T>> nodes,
+                                int count, int modificationCount,
+                                int start) {
         super(nodes, count, modificationCount, start);
     }
 
@@ -61,7 +62,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                         .sorted((Comparator.comparing(o -> nodeModificationCount.get(o.getKey())))))
                 .toList())
                 .stream()
-                .sorted(Comparator.comparing(o->o.getValue().getKey()))
+                .sorted(Comparator.comparing(o -> o.getValue().getKey()))
                 .collect(Collectors.toList());
 
         var newNodes = new LinkedHashMap<UUID, PersistentNode<DoubleLinkedData<T>>>();
@@ -110,7 +111,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
 
         var newHead = newNodes.get(nodes.content.pseudoHead.value(modificationCount).id);
         var newTail = newNodes.get(nodes.content.pseudoTail.value(modificationCount).id);
-        return new PersistentContent<>(new DoubleLinkedContent<T>(newHead, newTail),
+        return new PersistentContent<>(new DoubleLinkedContent<>(newHead, newTail),
                 new ModificationCount(modificationCount));
 
     }
@@ -128,30 +129,25 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
             return this;
         }
 
-        if (nodes.maxModification.value > modificationCount) {
-            var newContent = reassembleNodes();
-            newContent.update(m ->
+        Function<PersistentContent<DoubleLinkedContent<T>>, PersistentLinkedList<T>> updContent = (x) -> {
+            x.update(m ->
             {
                 m.pseudoHead.update(modificationCount + 1,
-                        new DoubleLinkedData<T>(m.pseudoTail, null, m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
+                        new DoubleLinkedData<>(m.pseudoTail, null, m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
                 m.pseudoTail.update(modificationCount + 1,
-                        new DoubleLinkedData<T>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
+                        new DoubleLinkedData<>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
             });
-            return new PersistentLinkedList<T>(newContent, 0, modificationCount + 1);
+
+            return new PersistentLinkedList<>(x, 0, modificationCount + 1);
+        };
+
+        if (nodes.maxModification.value > modificationCount) {
+            var newContent = reassembleNodes();
+            return updContent.apply(newContent);
         }
 
-        nodes.update(m ->
-        {
-            m.pseudoHead.update(modificationCount + 1,
-                    new DoubleLinkedData<T>(m.pseudoTail, null, m.pseudoHead.value(modificationCount).value, m.pseudoHead.value(modificationCount).id));
-            m.pseudoTail.update(modificationCount + 1,
-                    new DoubleLinkedData<>(null, m.pseudoHead, m.pseudoTail.value(modificationCount).value, m.pseudoTail.value(modificationCount).id));
-        });
-        return new PersistentLinkedList<>(nodes, 0, modificationCount + 1);
-
-
+        return updContent.apply(nodes);
     }
-
 
     public boolean contains(T item) {
         var current = nodes.content.pseudoHead.value(modificationCount).next;
@@ -216,7 +212,6 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         return removeFirst(nodes);
     }
 
-
     private PersistentLinkedList<T> addFirst(PersistentContent<DoubleLinkedContent<T>> content, T value) {
         var oldHead = content.content.pseudoHead.value(modificationCount);
         var oldNextToHead = oldHead.next;
@@ -224,7 +219,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         var newHead = new PersistentNode<>(modificationCount + 1,
                 new DoubleLinkedData<>(oldHead.next,
                         content.content.pseudoHead,
-                        new PersistentNode<T>(modificationCount + 1, value)
+                        new PersistentNode<>(modificationCount + 1, value)
                 )
         );
         content.update(m -> {
@@ -238,10 +233,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                             new DoubleLinkedData<>(newHead, null, oldHead.value, oldHead.id));
                 }
         );
+
         return new PersistentLinkedList<>(content, count + 1, modificationCount + 1);
-
     }
-
 
     private PersistentNode<DoubleLinkedData<T>> findNode(int num) {
         var current = nodes.content.pseudoHead.value(modificationCount).next;
@@ -264,7 +258,8 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                                 nodeValue.id)
                 )
         );
-        return new PersistentLinkedList<T>(content, count, modificationCount + 1);
+
+        return new PersistentLinkedList<>(content, count, modificationCount + 1);
     }
 
     private PersistentLinkedList<T> addLast(PersistentContent<DoubleLinkedContent<T>> content, T value) {
@@ -274,7 +269,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         var newTail = new PersistentNode<>(modificationCount + 1,
                 new DoubleLinkedData<>(content.content.pseudoTail,
                         oldTail.previous,
-                        new PersistentNode<T>(modificationCount + 1, value)
+                        new PersistentNode<>(modificationCount + 1, value)
                 )
         );
         content.update(m -> {
@@ -289,6 +284,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                     );
                 }
         );
+
         return new PersistentLinkedList<>(content, count + 1, modificationCount + 1);
     }
 
@@ -311,7 +307,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                     );
                 }
         );
-        return new PersistentLinkedList<T>(content, count - 1, modificationCount + 1);
+        return new PersistentLinkedList<>(content, count - 1, modificationCount + 1);
     }
 
     private PersistentLinkedList<T> removeLast(PersistentContent<DoubleLinkedContent<T>> content) {
@@ -334,7 +330,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
                     );
                 }
         );
-        return new PersistentLinkedList<T>(content, count - 1, modificationCount + 1);
+        return new PersistentLinkedList<>(content, count - 1, modificationCount + 1);
     }
 
 
@@ -359,7 +355,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
             current = currentValue.next;
         }
 
-        return new PersistentArray<T>(content, count, modificationCount, modificationCount);
+        return new PersistentArray<>(content, count, modificationCount, modificationCount);
     }
 
 

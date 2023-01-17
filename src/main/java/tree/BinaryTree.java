@@ -2,7 +2,7 @@ package tree;
 
 import java.util.*;
 
-public class BinaryTree<TK, TV> {
+public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
     public Node<TK, TV> root;
 
     public Node<TK, TV> find(TK key) {
@@ -353,8 +353,7 @@ public class BinaryTree<TK, TV> {
     }
 
     public List<Map.Entry<TK, TV>> toList() {
-        var res = new ArrayList<Map.Entry<TK, TV>>() {
-        };
+        var res = new ArrayList<Map.Entry<TK, TV>>();
 
         addToList(res, root);
 
@@ -368,12 +367,12 @@ public class BinaryTree<TK, TV> {
             }
 
             addToList(list, node.left);
-            list.add(Map.entry(node.key, node.data));
+            list.add(new AbstractMap.SimpleEntry<>(node.key, node.data));
             node = node.right;
         }
     }
 
-    public Iterator<Map.Entry<TK, TV>> getIterator() {
+    public Iterator<Map.Entry<TK, TV>> iterator() {
         return toList().iterator();
     }
 }
