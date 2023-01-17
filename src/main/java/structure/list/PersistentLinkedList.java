@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLinkedContent<T>> implements IUndoRedo<PersistentLinkedList<T>> {
+public class PersistentLinkedList<T> extends BasePersistentCollection<Integer, T, DoubleLinkedContent<T>> implements IUndoRedo<PersistentLinkedList<T>> {
 
     public PersistentLinkedList() {
         var head = new PersistentNode<>(modificationCount - 1, new DoubleLinkedData<T>(null, null, new PersistentNode<>(-1, null)));
@@ -116,7 +116,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
 
     }
 
-    public T get(int num) {
+    public T get(Integer num) {
         var node = findNode(num);
         return node == nodes.content.pseudoTail ? null :
                 node.value(modificationCount).value == null ?
@@ -158,7 +158,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLink
         return false;
     }
 
-    public PersistentLinkedList<T> replace(int num, T value) {
+    public PersistentLinkedList<T> replace(Integer num, T value) {
         if (num > count) return this;
         if (nodes.maxModification.value > modificationCount) {
             var newContent = reassembleNodes();

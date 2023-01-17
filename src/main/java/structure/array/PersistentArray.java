@@ -7,7 +7,7 @@ import structure.list.PersistentLinkedList;
 
 import java.util.*;
 
-public class PersistentArray<T> extends BasePersistentCollection<List<PersistentNode<T>>> implements Iterable<T>, IUndoRedo<PersistentArray<T>> {
+public class PersistentArray<T> extends BasePersistentCollection<Integer, T, List<PersistentNode<T>>> implements Iterable<T>, IUndoRedo<PersistentArray<T>> {
     public PersistentArray() throws IndexOutOfBoundsException {
         nodes = new PersistentContent<>(new ArrayList<>(), new ModificationCount(modificationCount));
     }
@@ -117,7 +117,7 @@ public class PersistentArray<T> extends BasePersistentCollection<List<Persistent
         return new PersistentArray<>(nodes, count + 1, modificationCount + 1);
     }
 
-    public PersistentArray<T> replace(int index, T value) {
+    public PersistentArray<T> replace(Integer index, T value) {
         if (index < 0 || index > count) {
             throw new IndexOutOfBoundsException(index);
         }
@@ -161,7 +161,7 @@ public class PersistentArray<T> extends BasePersistentCollection<List<Persistent
         return new PersistentArray<>(nodes, 0, modificationCount + 1);
     }
 
-    public T get(int index) {
+    public T get(Integer index) {
         if (index < 0 || index >= count) {
             throw new IndexOutOfBoundsException(index);
         }

@@ -7,7 +7,7 @@ import tree.BinaryTree;
 
 import java.util.*;
 
-public class PersistentMap<TK, TV> extends BasePersistentCollection<BinaryTree<TK, PersistentNode<TV>>> implements Iterable<Map.Entry<TK, TV>>, IUndoRedo<PersistentMap<TK, TV>> {
+public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, BinaryTree<TK, PersistentNode<TV>>> implements Iterable<Map.Entry<TK, TV>>, IUndoRedo<PersistentMap<TK, TV>> {
     public PersistentMap() {
         nodes = new PersistentContent<>(new BinaryTree<>(), new ModificationCount(modificationCount));
     }
