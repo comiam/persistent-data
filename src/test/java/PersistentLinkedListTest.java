@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import structure.PersistentLinkedList;
+import structure.list.PersistentLinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 

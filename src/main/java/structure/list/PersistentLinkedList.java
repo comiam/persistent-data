@@ -1,11 +1,9 @@
-package structure;
+package structure.list;
 
 import persistency_base.*;
-import structure.Linked_list_util.DoubleLinkedContent;
-import structure.Linked_list_util.DoubleLinkedData;
+import structure.array.PersistentArray;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PersistentLinkedList<T> extends BasePersistentCollection<DoubleLinkedContent<T>> implements IUndoRedo<PersistentLinkedList<T>> {

@@ -1,4 +1,4 @@
-package structure;
+package structure.array;
 
 import persistency_base.*;
 
@@ -13,7 +13,7 @@ public class PersistentArray<T> extends BasePersistentCollection<List<Persistent
         super(nodes, count, modificationCount);
     }
 
-    PersistentArray(PersistentContent<List<PersistentNode<T>>> nodes, int count, int modificationCount, int start) {
+    public PersistentArray(PersistentContent<List<PersistentNode<T>>> nodes, int count, int modificationCount, int start) {
         super(nodes, count, modificationCount, start);
     }
 

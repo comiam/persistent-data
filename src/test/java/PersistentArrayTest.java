@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import structure.PersistentArray;
+import structure.array.PersistentArray;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
