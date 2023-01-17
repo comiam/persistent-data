@@ -1,11 +1,12 @@
-package structure.map;
+package persistence.structure.map;
 
-import persistency_base.*;
-import structure.array.PersistentArray;
-import structure.list.PersistentLinkedList;
-import tree.BinaryTree;
+import persistence.base.*;
+import persistence.base.tree.BinaryTree;
+import persistence.structure.array.PersistentArray;
+import persistence.structure.list.PersistentLinkedList;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, BinaryTree<TK, PersistentNode<TV>>> implements Iterable<Map.Entry<TK, TV>>, IUndoRedo<PersistentMap<TK, TV>> {
     public PersistentMap() {
@@ -142,10 +143,6 @@ public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, Bina
         return new PersistentMap<>(nodes, count, modificationCount + 1);
     }
 
-    public boolean containsKey(TK key) {
-        return nodes.content.contains(key);
-    }
-
     public TV get(TK key) {
         var node = nodes.content.get(key);
 
@@ -154,7 +151,7 @@ public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, Bina
                 : node.modifications.findNearestLess(modificationCount);
     }
 
-    public List<TK> keySet() {
+    public Set<TK> keySet() {
         return nodes.content.
                 toList().
                 stream().
@@ -164,11 +161,11 @@ public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, Bina
                         anyMatch(m -> m.getKey() <= modificationCount)
                 ).
                 map(Map.Entry::getKey).
-                toList();
+                collect(Collectors.toSet());
     }
 
 
-    public List<TV> valueSet() {
+    public Set<TV> valueSet() {
         return nodes.content.
                 toList().
                 stream().
@@ -178,7 +175,7 @@ public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, Bina
                         anyMatch(m -> m.getKey() <= modificationCount)
                 ).
                 map(k -> k.getValue().value(modificationCount)).
-                toList();
+                collect(Collectors.toSet());
     }
 
     public Iterator<Map.Entry<TK, TV>> iterator() {
@@ -226,4 +223,3 @@ public class PersistentMap<TK, TV> extends BasePersistentCollection<TK, TV, Bina
         return toPersistentArray().toPersistentLinkedList();
     }
 }
-

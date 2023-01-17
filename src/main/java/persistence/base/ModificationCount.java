@@ -1,4 +1,4 @@
-package persistency_base;
+package persistence.base;
 
 public class ModificationCount {
     public int value;

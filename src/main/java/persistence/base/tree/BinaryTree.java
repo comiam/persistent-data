@@ -1,4 +1,4 @@
-package tree;
+package persistence.base.tree;
 
 import java.util.*;
 
@@ -94,15 +94,6 @@ public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
         return optimalNode == null ? null : optimalNode.data;
     }
 
-
-    private void inOrderDisplay(Node<TK, TV> current) {
-        if (current != null) {
-            inOrderDisplay(current.left);
-            System.out.println(current.data.toString());
-            inOrderDisplay(current.right);
-        }
-    }
-
     private void leftRotate(Node<TK, TV> X) {
         var Y = X.right; // set Y
         X.right = Y.left; //turn Y's left subtree into X's right subtree
@@ -189,7 +180,7 @@ public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
                 }
             } else {
                 //mirror image of code above
-                Node<TK, TV> X = null;
+                Node<TK, TV> X;
 
                 X = item.parent.parent.left;
                 if (X != null && X.colour == Color.Black) //Case 1
@@ -215,50 +206,6 @@ public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
         }
     }
 
-    public void delete(TK key) {
-        //first find the node in the tree to delete and assign to item pointer/reference
-        var item = find(key);
-        Node<TK, TV> X;
-        Node<TK, TV> Y;
-
-        if (item == null) {
-            System.out.println("Nothing to delete!");
-            return;
-        }
-
-        if (item.left == null || item.right == null) {
-            Y = item;
-        } else {
-            Y = treeSuccessor(item);
-        }
-
-        if (Y.left != null) {
-            X = Y.left;
-        } else {
-            X = Y.right;
-        }
-
-        if (X != null) {
-            X.parent = Y;
-        }
-
-        if (Y.parent == null) {
-            root = X;
-        } else if (Y == Y.parent.left) {
-            Y.parent.left = X;
-        } else {
-            Y.parent.left = X;
-        }
-
-        if (Y != item) {
-            item.data = Y.data;
-        }
-
-        if (Y.colour == Color.Black) {
-            deleteFixUp(X);
-        }
-    }
-
     public TV get(TK key) {
         var node = find(key);
         return node == null ? null : node.data;
@@ -266,90 +213,6 @@ public class BinaryTree<TK, TV> implements Iterable<Map.Entry<TK, TV>> {
 
     public boolean contains(TK key) {
         return find(key) != null;
-    }
-
-    private void deleteFixUp(Node<TK, TV> X) {
-        while (X != null && X != root && X.colour == Color.Black) {
-            Node<TK, TV> W;
-            if (X == X.parent.left) {
-                W = X.parent.right;
-                if (W.colour == Color.Red) {
-                    W.colour = Color.Black; //case 1
-                    X.parent.colour = Color.Red; //case 1
-                    leftRotate(X.parent); //case 1
-                    W = X.parent.right; //case 1
-                }
-
-                if (W.left.colour == Color.Black && W.right.colour == Color.Black) {
-                    W.colour = Color.Red; //case 2
-                    X = X.parent; //case 2
-                } else if (W.right.colour == Color.Black) {
-                    W.left.colour = Color.Black; //case 3
-                    W.colour = Color.Red; //case 3
-                    rightRotate(W); //case 3
-                    W = X.parent.right; //case 3
-                }
-
-                W.colour = X.parent.colour; //case 4
-                X.parent.colour = Color.Black; //case 4
-                W.right.colour = Color.Black; //case 4
-                leftRotate(X.parent); //case 4
-            } else //mirror code from above with "right" & "left" exchanged
-            {
-                W = X.parent.left;
-                if (W.colour == Color.Red) {
-                    W.colour = Color.Black;
-                    X.parent.colour = Color.Red;
-                    rightRotate(X.parent);
-                    W = X.parent.left;
-                }
-
-                if (W.right.colour == Color.Black && W.left.colour == Color.Black) {
-                    W.colour = Color.Black;
-                    X = X.parent;
-                } else if (W.left.colour == Color.Black) {
-                    W.right.colour = Color.Black;
-                    W.colour = Color.Red;
-                    leftRotate(W);
-                    W = X.parent.left;
-                }
-
-                W.colour = X.parent.colour;
-                X.parent.colour = Color.Black;
-                W.left.colour = Color.Black;
-                rightRotate(X.parent);
-            }
-            X = root; //case 4
-        }
-
-        if (X != null)
-            X.colour = Color.Black;
-    }
-
-    private Node<TK, TV> minimum(Node<TK, TV> X) {
-        while (X.left.left != null) {
-            X = X.left;
-        }
-
-        if (X.left.right != null) {
-            X = X.left.right;
-        }
-
-        return X;
-    }
-
-    private Node<TK, TV> treeSuccessor(Node<TK, TV> X) {
-        if (X.left != null) {
-            return minimum(X);
-        } else {
-            var Y = X.parent;
-            while (Y != null && X == Y.right) {
-                X = Y;
-                Y = Y.parent;
-            }
-
-            return Y;
-        }
     }
 
     public List<Map.Entry<TK, TV>> toList() {

@@ -1,6 +1,6 @@
-package persistency_base;
+package persistence.base;
 
-import tree.BinaryTree;
+import persistence.base.tree.BinaryTree;
 
 public class PersistentNode<TV> {
     public BinaryTree<Integer, TV> modifications = new BinaryTree<>();

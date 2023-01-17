@@ -1,6 +1,5 @@
 import org.junit.jupiter.api.Test;
-import persistency_base.BasePersistentCollection;
-import structure.array.PersistentArray;
+import persistence.structure.array.PersistentArray;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,8 +26,7 @@ public class NestedPersistentCollectionsTest {
         outerArray = outerArray.add(innerArray.add(innerInnerArray.add(42)));
 
         var res = outerArray.setIn(21, 0, 0, 0);
-        res = ((BasePersistentCollection) res).getIn(0, 0, 0);
 
-        assertEquals(21, res);
+        assertEquals(21, res.getIn(0, 0, 0));
     }
 }

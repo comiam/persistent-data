@@ -1,6 +1,6 @@
-package structure.list;
+package persistence.structure.list;
 
-import persistency_base.PersistentNode;
+import persistence.base.PersistentNode;
 
 import java.util.UUID;
 
@@ -24,4 +24,3 @@ public class DoubleLinkedData<T> {
         this.id = id;
     }
 }
-

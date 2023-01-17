@@ -1,6 +1,6 @@
-package structure.list;
+package persistence.structure.list;
 
-import persistency_base.PersistentNode;
+import persistence.base.PersistentNode;
 
 public class DoubleLinkedContent<T> {
     public final PersistentNode<DoubleLinkedData<T>> pseudoHead, pseudoTail;

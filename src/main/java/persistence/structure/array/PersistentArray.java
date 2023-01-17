@@ -1,9 +1,9 @@
-package structure.array;
+package persistence.structure.array;
 
-import persistency_base.*;
-import structure.list.DoubleLinkedContent;
-import structure.list.DoubleLinkedData;
-import structure.list.PersistentLinkedList;
+import persistence.base.*;
+import persistence.structure.list.DoubleLinkedContent;
+import persistence.structure.list.DoubleLinkedData;
+import persistence.structure.list.PersistentLinkedList;
 
 import java.util.*;
 
@@ -166,14 +166,6 @@ public class PersistentArray<T> extends BasePersistentCollection<Integer, T, Lis
             throw new IndexOutOfBoundsException(index);
         }
         return nodes.content.get(index).value(modificationCount);
-    }
-
-    public int size() {
-        return nodes.content.size();
-    }
-
-    public boolean isEmpty() {
-        return nodes.content.isEmpty();
     }
 
     public Iterator<T> iterator() {

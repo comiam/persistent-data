@@ -1,7 +1,7 @@
-package structure.list;
+package persistence.structure.list;
 
-import persistency_base.*;
-import structure.array.PersistentArray;
+import persistence.base.*;
+import persistence.structure.array.PersistentArray;
 
 import java.util.*;
 import java.util.function.Function;
@@ -129,7 +129,7 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<Integer, T
             return this;
         }
 
-        Function<PersistentContent<DoubleLinkedContent<T>>, PersistentLinkedList<T>> updContent = (x) -> {
+        Function<PersistentContent<DoubleLinkedContent<T>>, PersistentLinkedList<T>> updContent = x -> {
             x.update(m ->
             {
                 m.pseudoHead.update(modificationCount + 1,
@@ -152,7 +152,9 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<Integer, T
     public boolean contains(T item) {
         var current = nodes.content.pseudoHead.value(modificationCount).next;
         for (var i = count; i != 0; i--) {
-            if (current.value(modificationCount).value.equals(item)) return true;
+            if (current.value(modificationCount).value.value(modificationCount).equals(item)) {
+                return true;
+            }
             current = current.value(modificationCount).next;
         }
         return false;
@@ -381,5 +383,4 @@ public class PersistentLinkedList<T> extends BasePersistentCollection<Integer, T
     public int size() {
         return count;
     }
-
 }

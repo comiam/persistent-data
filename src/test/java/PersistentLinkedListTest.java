@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import structure.list.PersistentLinkedList;
+import persistence.structure.list.PersistentLinkedList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +53,15 @@ public class PersistentLinkedListTest {
         assertEquals(4, l4.get(1));
         assertEquals(6, l4.get(2));
         assertNull(l4.get(3));
+    }
 
+    @Test
+    public void containsTest() {
+        var l0 = new PersistentLinkedList<Integer>();
+        var l1 = l0.addLast(2);
+
+        assertTrue(l1.contains(2));
+        assertFalse(l0.contains(2));
     }
 
     @Test
@@ -241,9 +249,4 @@ public class PersistentLinkedListTest {
         assertEquals(2, arr0.get(2));
         assertThrows(IndexOutOfBoundsException.class, () -> arr0.get(3));
     }
-
-    public void toPersistentMap(){
-
-    }
-
 }

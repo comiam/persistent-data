@@ -1,5 +1,5 @@
 import org.junit.jupiter.api.Test;
-import structure.array.PersistentArray;
+import persistence.structure.array.PersistentArray;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -183,6 +183,7 @@ public class PersistentArrayTest {
         assertEquals(5, arr6.get(1));
         assertEquals(6, arr6.get(2));
     }
+
     @Test
     public void toPersistentLinkedListTest() {
         var arr0 = new PersistentArray<Integer>();
@@ -199,5 +200,4 @@ public class PersistentArrayTest {
         assertEquals(6, l1.get(2));
         assertEquals(8, l1.get(3));
     }
-
 }

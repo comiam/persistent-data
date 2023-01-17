@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tree.BinaryTree;
+import persistence.base.tree.BinaryTree;
 
 import java.util.stream.Stream;
 
@@ -31,6 +31,21 @@ public class BinaryTreeTest {
         tree.insert(20, 20);
     }
 
+    public static Stream<Arguments> searchTestArgSource() {
+        return Stream.of(
+                Arguments.of(8, 7),
+                Arguments.of(2, 1),
+                Arguments.of(13, 12),
+                Arguments.of(19, 18),
+                Arguments.of(30, 20),
+                Arguments.of(1, 1),
+                Arguments.of(6, 6),
+                Arguments.of(20, 20),
+                Arguments.of(0, null),
+                Arguments.of(-10, null)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("searchTestArgSource")
     public void searchTest(Integer value, Integer expected) {
@@ -49,20 +64,4 @@ public class BinaryTreeTest {
             assertEquals(keys[i], list.get(i).getKey());
         }
     }
-
-    public static Stream<Arguments> searchTestArgSource() {
-        return Stream.of(
-                Arguments.of(8, 7),
-                Arguments.of(2, 1),
-                Arguments.of(13, 12),
-                Arguments.of(19, 18),
-                Arguments.of(30, 20),
-                Arguments.of(1, 1),
-                Arguments.of(6, 6),
-                Arguments.of(20, 20),
-                Arguments.of(0, null),
-                Arguments.of(-10, null)
-        );
-    }
 }
-

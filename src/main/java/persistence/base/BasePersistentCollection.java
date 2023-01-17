@@ -1,14 +1,11 @@
-package persistency_base;
+package persistence.base;
 
 import java.util.Arrays;
 
 public abstract class BasePersistentCollection<K, OT, BT> {
-    protected PersistentContent<BT> nodes;
     protected final int modificationCount, startModificationCount;
-
-    public abstract OT get(K key);
-
-    public abstract BasePersistentCollection<K, OT, BT> replace(K key, OT newValue);
+    public int count;
+    protected PersistentContent<BT> nodes;
 
     protected BasePersistentCollection() {
         modificationCount = 0;
@@ -26,7 +23,9 @@ public abstract class BasePersistentCollection<K, OT, BT> {
         this.count = count;
     }
 
-    public int count;
+    public abstract OT get(K key);
+
+    public abstract BasePersistentCollection<K, OT, BT> replace(K key, OT newValue);
 
     protected abstract int recalculateCount(int modificationStep);
 
@@ -51,12 +50,16 @@ public abstract class BasePersistentCollection<K, OT, BT> {
         return item;
     }
 
-    public Object setIn(Object value, Object... keys) {
+    public BasePersistentCollection<K, OT, BT> setIn(Object value, Object... keys) {
         if (keys.length == 1) {
             return replace((K) keys[0], (OT) value);
         }
 
-        return replace((K) keys[0], (OT) setIn(value, Arrays.copyOfRange(keys, 1, keys.length)));
+        return replace((K) keys[0], (OT) setIn(value, removeFirstKey(keys)));
+    }
+
+    private Object[] removeFirstKey(Object... keys) {
+        return Arrays.copyOfRange(keys, 1, keys.length);
     }
 }
 

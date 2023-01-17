@@ -1,4 +1,4 @@
-package persistency_base;
+package persistence.base;
 
 import java.util.function.Consumer;
 

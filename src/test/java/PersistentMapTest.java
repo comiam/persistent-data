@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Test;
-import structure.map.PersistentMap;
+import persistence.structure.map.PersistentMap;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -89,6 +91,22 @@ public class PersistentMapTest {
         assertNull(d5.get(3));
         assertNull(d5.get(4));
         assertNull(d5.get(5));
+    }
+
+    @Test
+    public void keyValueSetTest() {
+        var d0 = new PersistentMap<String, Integer>();
+        var d1 = d0.add("Lol", 3);
+        var d2 = d1.add("Kek", 4);
+        var d3 = d2.add("heh", 5);
+
+        assertEquals(d1.keySet(), Set.of("Lol"));
+        assertEquals(d2.keySet(), Set.of("Lol", "Kek"));
+        assertEquals(d3.keySet(), Set.of("Lol", "Kek", "heh"));
+
+        assertEquals(d1.valueSet(), Set.of(3));
+        assertEquals(d2.valueSet(), Set.of(3, 4));
+        assertEquals(d3.valueSet(), Set.of(3, 4, 5));
     }
 
     @Test
@@ -183,6 +201,22 @@ public class PersistentMapTest {
         var d4 = d3.add(6, 6);
 
         var arr = d4.toPersistentArray();
+
+        assertEquals(3, arr.get(0));
+        assertEquals(4, arr.get(1));
+        assertEquals(5, arr.get(2));
+        assertEquals(6, arr.get(3));
+    }
+
+    @Test
+    public void toPersistentLinkedListTest() {
+        var d0 = new PersistentMap<Integer, Integer>();
+        var d1 = d0.add(3, 3);
+        var d2 = d1.add(4, 4);
+        var d3 = d2.add(5, 5);
+        var d4 = d3.add(6, 6);
+
+        var arr = d4.toPersistentLinkedList();
 
         assertEquals(3, arr.get(0));
         assertEquals(4, arr.get(1));
