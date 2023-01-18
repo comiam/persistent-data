@@ -42,8 +42,8 @@ public abstract class BasePersistentCollection<K, OT, BT> {
                 throw new IndexOutOfBoundsException(String.format(
                         "out of nested bounds - real nest:%d, got keys: %d",
                         (i - 1),
-                        keysLength)
-                );
+                        keysLength
+                ));
             }
         }
 
@@ -55,7 +55,13 @@ public abstract class BasePersistentCollection<K, OT, BT> {
             return replace((K) keys[0], (OT) value);
         }
 
-        return replace((K) keys[0], (OT) setIn(value, removeFirstKey(keys)));
+        if (!(get((K) keys[0]) instanceof BasePersistentCollection bpc)) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "out of nested bounds - real nest:%d from the keys end", keys.length
+            ));
+        }
+
+        return replace((K) keys[0], (OT) bpc.setIn(value, removeFirstKey(keys)));
     }
 
     private Object[] removeFirstKey(Object... keys) {
